@@ -57,25 +57,25 @@ class Program
 
     const MAXIMUM_QUALITY = 50;
 
-    const BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS = 10;
+    const QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS = 10;
 
-    const BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS = 5;
+    const QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS = 5;
 
     public static function Main()
     {
         echo "HELLO\n";
 
         $app = new Program(array(
-              new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS,'quality' => 20)),
-              new Item(array( 'name' => self::AGED_BRIE,'sellIn' => 2,'quality' => 0)),
-              new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS,'quality' => 7)),
-              new Item(array( 'name' => self::SULFURAS,'sellIn' => 0,'quality' => 80)),
-              new Item(array(
-                     'name' => self::BACKSTAGE,
-                     'sellIn' => 15,
-                     'quality' => 20
-              )),
-              new Item(array('name' => "Conjured Mana Cake",'sellIn' => 3,'quality' => 6)),
+            new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => 10,'quality' => 20)),
+            new Item(array( 'name' => "Aged Brie",'sellIn' => 2,'quality' => 0)),
+            new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => 5,'quality' => 7)),
+            new Item(array( 'name' => "Sulfuras, Hand of Ragnaros",'sellIn' => 0,'quality' => 80)),
+            new Item(array(
+                'name' => "Backstage passes to a TAFKAL80ETC concert",
+                'sellIn' => 15,
+                'quality' => 20
+            )),
+            new Item(array('name' => "Conjured Mana Cake",'sellIn' => 3,'quality' => 6)),
         ));
 
         $app->UpdateQuality();
@@ -91,60 +91,70 @@ class Program
         $this->items = $items;
     }
 
+
     public function UpdateQuality()
     {
         for ($i = 0; $i < count($this->items); $i++) {
 
             $currentItem = $this->items[$i];
 
-            if ($this->isAgedBrieItem($currentItem) === false && $this->isBackstageItem($currentItem) === false) {
-                if ($currentItem->quality > 0) {
-                    if ($this->isSulfurasItem($currentItem) === false) {
-                        $currentItem->quality = $currentItem->quality - 1;
-                    }
-                }
-            } else {
-                if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                    $currentItem->quality = $currentItem->quality + 1;
+            if ($this->isSpecialItem($currentItem)) {
+
+                if ($this->itemBelowMaximumQuality($currentItem)) {
+
+                    $this->increaseItemQuality($currentItem);
 
                     if ($this->isBackstageItem($currentItem)) {
-                        if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
-                            if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                                $currentItem->quality = $currentItem->quality + 1;
-                            }
+
+                        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
+                            $this->increaseItemQualityIfMaximumNotReached($currentItem);
                         }
 
-                        if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
-                            if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                                $currentItem->quality = $currentItem->quality + 1;
-                            }
+                        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
+                            $this->increaseItemQualityIfMaximumNotReached($currentItem);
                         }
+                    }
+                }
+            } else { // not Aged brie nor backstage
+                if ($this->itemHasPositiveQuality($currentItem)) {
+                    if ($this->isSulfurasItem($currentItem) === false) {
+                        $this->decreaseItemQuality($currentItem);
                     }
                 }
             }
 
             if ($this->isSulfurasItem($currentItem) === false) {
-                $currentItem->sellIn = $currentItem->sellIn - 1;
+                $this->decreaseItemSellIn($currentItem);
             }
 
             if ($currentItem->sellIn < 0) {
                 if ($this->isAgedBrieItem($currentItem) === false) {
                     if ($this->isBackstageItem($currentItem) === false) {
-                        if ($currentItem->quality > 0) {
+                        if ($this->itemHasPositiveQuality($currentItem)) {
                             if ($this->isSulfurasItem($currentItem) === false) {
-                                $currentItem->quality = $currentItem->quality - 1;
+                                $this->decreaseItemQuality($currentItem);
                             }
                         }
                     } else {
                         $currentItem->quality = $currentItem->quality - $currentItem->quality;
                     }
                 } else {
-                    if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                        $currentItem->quality = $currentItem->quality + 1;
-                    }
+                    $this->increaseItemQualityIfMaximumNotReached($currentItem);
                 }
             }
         }
+    }
+
+
+    /**
+     *
+     * "Aged brie" and "Backstage" are special items with their own rules.
+     * @param $item
+     * @return bool
+     */
+    private function isSpecialItem($item)
+    {
+        return $this->isAgedBrieItem($item) || $this->isBackstageItem($item);
     }
 
     /**
@@ -172,5 +182,57 @@ class Program
     private function isBackstageItem($currentItem)
     {
         return $currentItem->name === self::BACKSTAGE;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function decreaseItemQuality($currentItem)
+    {
+        $currentItem->quality = $currentItem->quality - 1;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function increaseItemQuality($currentItem)
+    {
+        $currentItem->quality = $currentItem->quality + 1;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function decreaseItemSellIn($currentItem)
+    {
+        $currentItem->sellIn = $currentItem->sellIn - 1;
+    }
+
+    /**
+     * @param $currentItem
+     * @return bool
+     */
+    private function itemBelowMaximumQuality($currentItem)
+    {
+        return $currentItem->quality < self::MAXIMUM_QUALITY;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function increaseItemQualityIfMaximumNotReached($currentItem)
+    {
+        if ($this->itemBelowMaximumQuality($currentItem)) {
+            $this->increaseItemQuality($currentItem);
+        }
+    }
+
+    /**
+     * @param $currentItem
+     * @return bool
+     */
+    private function itemHasPositiveQuality($currentItem)
+    {
+        return $currentItem->quality > 0;
     }
 }
