@@ -49,17 +49,23 @@ class Program
 {
     private $items = array();
 
+    const AGED_BRIE = "Aged Brie";
+
+    const BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert";
+
+    const SULFURAS = "Sulfuras, Hand of Ragnaros";
+
     public static function Main()
     {
         echo "HELLO\n";
 
         $app = new Program(array(
               new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => 10,'quality' => 20)),
-              new Item(array( 'name' => "Aged Brie",'sellIn' => 2,'quality' => 0)),
+              new Item(array( 'name' => self::AGED_BRIE,'sellIn' => 2,'quality' => 0)),
               new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => 5,'quality' => 7)),
-              new Item(array( 'name' => "Sulfuras, Hand of Ragnaros",'sellIn' => 0,'quality' => 80)),
+              new Item(array( 'name' => self::SULFURAS,'sellIn' => 0,'quality' => 80)),
               new Item(array(
-                     'name' => "Backstage passes to a TAFKAL80ETC concert",
+                     'name' => self::BACKSTAGE,
                      'sellIn' => 15,
                      'quality' => 20
               )),
@@ -82,9 +88,9 @@ class Program
     public function UpdateQuality()
     {
         for ($i = 0; $i < count($this->items); $i++) {
-            if ($this->items[$i]->name != "Aged Brie" && $this->items[$i]->name != "Backstage passes to a TAFKAL80ETC concert") {
+            if ($this->items[$i]->name != self::AGED_BRIE && $this->items[$i]->name != "" . self::BACKSTAGE) {
                 if ($this->items[$i]->quality > 0) {
-                    if ($this->items[$i]->name != "Sulfuras, Hand of Ragnaros") {
+                    if ($this->items[$i]->name != self::SULFURAS) {
                         $this->items[$i]->quality = $this->items[$i]->quality - 1;
                     }
                 }
@@ -92,7 +98,7 @@ class Program
                 if ($this->items[$i]->quality < 50) {
                     $this->items[$i]->quality = $this->items[$i]->quality + 1;
 
-                    if ($this->items[$i]->name == "Backstage passes to a TAFKAL80ETC concert") {
+                    if ($this->items[$i]->name == self::BACKSTAGE) {
                         if ($this->items[$i]->sellIn < 11) {
                             if ($this->items[$i]->quality < 50) {
                                 $this->items[$i]->quality = $this->items[$i]->quality + 1;
@@ -108,15 +114,15 @@ class Program
                 }
             }
 
-            if ($this->items[$i]->name != "Sulfuras, Hand of Ragnaros") {
+            if ($this->items[$i]->name != self::SULFURAS) {
                 $this->items[$i]->sellIn = $this->items[$i]->sellIn - 1;
             }
 
             if ($this->items[$i]->sellIn < 0) {
-                if ($this->items[$i]->name != "Aged Brie") {
-                    if ($this->items[$i]->name != "Backstage passes to a TAFKAL80ETC concert") {
+                if ($this->items[$i]->name != self::AGED_BRIE) {
+                    if ($this->items[$i]->name != self::BACKSTAGE) {
                         if ($this->items[$i]->quality > 0) {
-                            if ($this->items[$i]->name != "Sulfuras, Hand of Ragnaros") {
+                            if ($this->items[$i]->name != self::SULFURAS) {
                                 $this->items[$i]->quality = $this->items[$i]->quality - 1;
                             }
                         }
