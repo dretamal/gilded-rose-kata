@@ -100,26 +100,29 @@ class Program
 
             if ($this->isSpecialItem($currentItem)) {
 
-                if ($this->itemBelowMaximumQuality($currentItem)) {
+                if ($this->itemIsBelowMaximumQuality($currentItem)) {
 
                     $this->increaseItemQuality($currentItem);
 
                     if ($this->isBackstageItem($currentItem)) {
 
                         if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
-                            $this->increaseItemQualityIfMaximumNotReached($currentItem);
+                            if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                                $this->increaseItemQuality($currentItem);
+                            }
                         }
 
                         if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
-                            $this->increaseItemQualityIfMaximumNotReached($currentItem);
+                            if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                                $this->increaseItemQuality($currentItem);
+                            }
                         }
                     }
                 }
             } else { // not Aged brie nor backstage
-                if ($this->itemHasPositiveQuality($currentItem)) {
-                    if ($this->isSulfurasItem($currentItem) === false) {
-                        $this->decreaseItemQuality($currentItem);
-                    }
+                if ($this->itemHasPositiveQuality($currentItem) &&
+                    $this->isSulfurasItem($currentItem) === false) {
+                    $this->decreaseItemQuality($currentItem);
                 }
             }
 
@@ -128,18 +131,20 @@ class Program
             }
 
             if ($this->itemSellInBelowZero($currentItem)) {
-                if ($this->isAgedBrieItem($currentItem) === false) {
-                    if ($this->isBackstageItem($currentItem) === false) {
-                        if ($this->itemHasPositiveQuality($currentItem)) {
-                            if ($this->isSulfurasItem($currentItem) === false) {
-                                $this->decreaseItemQuality($currentItem);
-                            }
-                        }
-                    } else {
-                        $currentItem->quality = $currentItem->quality - $currentItem->quality;
+                if ($this->isAgedBrieItem($currentItem)) {
+                    if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                        $this->increaseItemQuality($currentItem);
                     }
                 } else {
-                    $this->increaseItemQualityIfMaximumNotReached($currentItem);
+                    if ($this->isBackstageItem($currentItem)) {
+                        $currentItem->quality = $currentItem->quality - $currentItem->quality;
+                    } else {
+                        $itemHasPositiveQuality = $this->itemHasPositiveQuality($currentItem);
+                        if ($itemHasPositiveQuality &&
+                            $this->isSulfurasItem($currentItem) === false) {
+                            $this->decreaseItemQuality($currentItem);
+                        }
+                    }
                 }
             }
         }
@@ -212,19 +217,9 @@ class Program
      * @param $item
      * @return bool
      */
-    private function itemBelowMaximumQuality($item)
+    private function itemIsBelowMaximumQuality($item)
     {
         return $item->quality < self::MAXIMUM_QUALITY;
-    }
-
-    /**
-     * @param $item
-     */
-    private function increaseItemQualityIfMaximumNotReached($item)
-    {
-        if ($this->itemBelowMaximumQuality($item)) {
-            $this->increaseItemQuality($item);
-        }
     }
 
     /**
