@@ -98,68 +98,13 @@ class Program
 
             $currentItem = $this->items[$i];
 
-            if ($this->isSpecialItem($currentItem)) {
-
-                if ($this->itemIsBelowMaximumQuality($currentItem)) {
-
-                    $this->increaseItemQuality($currentItem);
-
-                    if ($this->isBackstageItem($currentItem)) {
-
-                        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
-                            if ($this->itemIsBelowMaximumQuality($currentItem)) {
-                                $this->increaseItemQuality($currentItem);
-                            }
-                        }
-
-                        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
-                            if ($this->itemIsBelowMaximumQuality($currentItem)) {
-                                $this->increaseItemQuality($currentItem);
-                            }
-                        }
-                    }
-                }
-            } else { // not Aged brie nor backstage
-                if ($this->itemHasPositiveQuality($currentItem) &&
-                    $this->isSulfurasItem($currentItem) === false) {
-                    $this->decreaseItemQuality($currentItem);
-                }
-            }
-
-            if ($this->isSulfurasItem($currentItem) === false) {
-                $this->decreaseItemSellIn($currentItem);
-            }
+            $this->processItemQuality($currentItem);
+            $this->processItemSellIn($currentItem);
 
             if ($this->itemSellInBelowZero($currentItem)) {
-                if ($this->isAgedBrieItem($currentItem)) {
-                    if ($this->itemIsBelowMaximumQuality($currentItem)) {
-                        $this->increaseItemQuality($currentItem);
-                    }
-                } else {
-                    if ($this->isBackstageItem($currentItem)) {
-                        $currentItem->quality = $currentItem->quality - $currentItem->quality;
-                    } else {
-                        $itemHasPositiveQuality = $this->itemHasPositiveQuality($currentItem);
-                        if ($itemHasPositiveQuality &&
-                            $this->isSulfurasItem($currentItem) === false) {
-                            $this->decreaseItemQuality($currentItem);
-                        }
-                    }
-                }
+                $this->updateQualityItemsByItemType($currentItem);
             }
         }
-    }
-
-
-    /**
-     *
-     * "Aged brie" and "Backstage" are special items with their own rules.
-     * @param $item
-     * @return bool
-     */
-    private function isSpecialItem($item)
-    {
-        return $this->isAgedBrieItem($item) || $this->isBackstageItem($item);
     }
 
     /**
@@ -173,24 +118,6 @@ class Program
 
     /**
      * @param $item
-     * @return bool
-     */
-    private function isAgedBrieItem($item)
-    {
-        return $item->name === self::AGED_BRIE;
-    }
-
-    /**
-     * @param $item
-     * @return bool
-     */
-    private function isBackstageItem($item)
-    {
-        return $item->name === self::BACKSTAGE;
-    }
-
-    /**
-     * @param $item
      */
     private function decreaseItemQuality($item)
     {
@@ -200,7 +127,7 @@ class Program
     /**
      * @param $item
      */
-    private function increaseItemQuality($item)
+    private function increaseItemQualityByOne($item)
     {
         $item->quality = $item->quality + 1;
     }
@@ -238,5 +165,87 @@ class Program
     private function itemSellInBelowZero($item)
     {
         return $item->sellIn < 0;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function increaseBackstageQualityWithSpecialRules($currentItem)
+    {
+        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
+            $this->increaseItemQualityByOne($currentItem);
+        }
+
+        if ($currentItem->sellIn <= self::QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
+            $this->increaseItemQualityByOne($currentItem);
+        }
+    }
+
+    /**
+     * @param $currentItem
+     * @return bool
+     */
+    private function itemQualityCanBeDecreased($currentItem)
+    {
+        return $this->itemHasPositiveQuality($currentItem) &&
+        $this->isSulfurasItem($currentItem) === false;
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function updateQualityItemsByItemType($currentItem)
+    {
+        switch ($currentItem->name) {
+            case "Aged Brie":
+                if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                    $this->increaseItemQualityByOne($currentItem);
+                }
+                break;
+            case 'Backstage passes to a TAFKAL80ETC concert':
+                $currentItem->quality = $currentItem->quality - $currentItem->quality;
+                break;
+            default:
+                if ($this->itemQualityCanBeDecreased($currentItem)) {
+                    $this->decreaseItemQuality($currentItem);
+                }
+                break;
+        }
+
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function processItemQuality($currentItem)
+    {
+        switch ($currentItem->name) {
+            case 'Aged Brie':
+                if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                    $this->increaseItemQualityByOne($currentItem);
+                }
+                break;
+            case 'Backstage passes to a TAFKAL80ETC concert':
+                if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                    $this->increaseItemQualityByOne($currentItem);
+                    $this->increaseBackstageQualityWithSpecialRules($currentItem);
+                }
+                break;
+            default:
+                if ($this->itemQualityCanBeDecreased($currentItem)) {
+                    $this->decreaseItemQuality($currentItem);
+                }
+                break;
+        }
+    }
+
+    /**
+     * @param $currentItem
+     */
+    private function processItemSellIn($currentItem)
+    {
+        if ($this->isSulfurasItem($currentItem) === false) {
+            $this->decreaseItemSellIn($currentItem);
+        }
     }
 }

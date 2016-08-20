@@ -305,6 +305,46 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
                 15 => array(
                     'sellIn' => 0,
                     'quality' => 50
+                ),
+                16 => array(
+                    'sellIn' => -1,
+                    'quality' => 0
+                ),
+                17 => array(
+                    'sellIn' => -2,
+                    'quality' => 0
+                ),
+                18 => array(
+                    'sellIn' => -3,
+                    'quality' => 0
+                ),
+                19 => array(
+                    'sellIn' => -4,
+                    'quality' => 0
+                ),
+                20 => array(
+                    'sellIn' => -5,
+                    'quality' => 0
+                ),
+                21 => array(
+                    'sellIn' => -6,
+                    'quality' => 0
+                ),
+                22 => array(
+                    'sellIn' => -7,
+                    'quality' => 0
+                ),
+                23 => array(
+                    'sellIn' => -8,
+                    'quality' => 0
+                ),
+                24 => array(
+                    'sellIn' => -9,
+                    'quality' => 0
+                ),
+                25 => array(
+                    'sellIn' => -10,
+                    'quality' => 0
                 )
             )
 
@@ -467,12 +507,12 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
     /**
      * just for info purposes
      */
-    public function _testViewOutput()
+    public function testViewOutput()
     {
-        $itemName = "Conjured Mana Cake";
-        $items = $this->initializeOneItem($itemName, $initialSellIn = 3, $initialQuality = 6);
+        $itemName = "Backstage passes to a TAFKAL80ETC concert";
+        $items = $this->initializeOneItem($itemName, $initialSellIn = 15, $initialQuality = 20);
         $program = new Program($items);
-        $days = 15;
+        $days = 25;
 
         for($i=1;$i<=$days;$i++){
             $program->UpdateQuality();
