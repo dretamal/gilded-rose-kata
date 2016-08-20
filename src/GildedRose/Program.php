@@ -100,23 +100,23 @@ class Program
             if ($this->isAgedBrieItem($currentItem) === false && $this->isBackstageItem($currentItem) === false) {
                 if ($currentItem->quality > 0) {
                     if ($this->isSulfurasItem($currentItem) === false) {
-                        $this->items[$i]->quality = $currentItem->quality - 1;
+                        $currentItem->quality = $currentItem->quality - 1;
                     }
                 }
             } else {
                 if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                    $this->items[$i]->quality = $currentItem->quality + 1;
+                    $currentItem->quality = $currentItem->quality + 1;
 
                     if ($this->isBackstageItem($currentItem)) {
                         if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
                             if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                                $this->items[$i]->quality = $currentItem->quality + 1;
+                                $currentItem->quality = $currentItem->quality + 1;
                             }
                         }
 
                         if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
                             if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                                $this->items[$i]->quality = $currentItem->quality + 1;
+                                $currentItem->quality = $currentItem->quality + 1;
                             }
                         }
                     }
@@ -124,7 +124,7 @@ class Program
             }
 
             if ($this->isSulfurasItem($currentItem) === false) {
-                $this->items[$i]->sellIn = $currentItem->sellIn - 1;
+                $currentItem->sellIn = $currentItem->sellIn - 1;
             }
 
             if ($currentItem->sellIn < 0) {
@@ -132,15 +132,15 @@ class Program
                     if ($this->isBackstageItem($currentItem) === false) {
                         if ($currentItem->quality > 0) {
                             if ($this->isSulfurasItem($currentItem) === false) {
-                                $this->items[$i]->quality = $currentItem->quality - 1;
+                                $currentItem->quality = $currentItem->quality - 1;
                             }
                         }
                     } else {
-                        $this->items[$i]->quality = $currentItem->quality - $currentItem->quality;
+                        $currentItem->quality = $currentItem->quality - $currentItem->quality;
                     }
                 } else {
                     if ($currentItem->quality < self::MAXIMUM_QUALITY) {
-                        $this->items[$i]->quality = $currentItem->quality + 1;
+                        $currentItem->quality = $currentItem->quality + 1;
                     }
                 }
             }
