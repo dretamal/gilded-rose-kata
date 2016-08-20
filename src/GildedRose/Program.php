@@ -248,4 +248,10 @@ class Program
             $this->decreaseItemSellIn($currentItem);
         }
     }
+
+    
+    /*public function getItems()
+    {
+        return $this->items;
+    }*/
 }

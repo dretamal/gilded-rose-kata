@@ -114,6 +114,7 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
             "initialQuality" => 0,
             "outputValues" => array(
 
+
                 1 => array(
                     'sellIn' => 1,
                     'quality' => 1
@@ -173,6 +174,46 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
                 15 => array(
                     'sellIn' => -13,
                     'quality' => 28
+                ),
+                16 => array(
+                    'sellIn' => -14,
+                    'quality' => 30
+                ),
+                17 => array(
+                    'sellIn' => -15,
+                    'quality' => 32
+                ),
+                18 => array(
+                    'sellIn' => -16,
+                    'quality' => 34
+                ),
+                19 => array(
+                    'sellIn' => -17,
+                    'quality' => 36
+                ),
+                20 => array(
+                    'sellIn' => -18,
+                    'quality' => 38
+                ),
+                21 => array(
+                    'sellIn' => -19,
+                    'quality' => 40
+                ),
+                22 => array(
+                    'sellIn' => -20,
+                    'quality' => 42
+                ),
+                23 => array(
+                    'sellIn' => -21,
+                    'quality' => 44
+                ),
+                24 => array(
+                    'sellIn' => -22,
+                    'quality' => 46
+                ),
+                25 => array(
+                    'sellIn' => -23,
+                    'quality' => 48
                 )
             )
         ),
@@ -507,10 +548,10 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
     /**
      * just for info purposes
      */
-    public function testViewOutput()
+    public function _testViewOutput()
     {
-        $itemName = "Backstage passes to a TAFKAL80ETC concert";
-        $items = $this->initializeOneItem($itemName, $initialSellIn = 15, $initialQuality = 20);
+        $itemName = "Aged Brie";
+        $items = $this->initializeOneItem($itemName, $initialSellIn = 2, $initialQuality = 0);
         $program = new Program($items);
         $days = 25;
 
