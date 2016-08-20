@@ -127,7 +127,7 @@ class Program
                 $this->decreaseItemSellIn($currentItem);
             }
 
-            if ($currentItem->sellIn < 0) {
+            if ($this->itemSellInBelowZero($currentItem)) {
                 if ($this->isAgedBrieItem($currentItem) === false) {
                     if ($this->isBackstageItem($currentItem) === false) {
                         if ($this->itemHasPositiveQuality($currentItem)) {
@@ -158,81 +158,90 @@ class Program
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      * @return bool
      */
-    private function isSulfurasItem($currentItem)
+    private function isSulfurasItem($item)
     {
-        return $currentItem->name === self::SULFURAS;
+        return $item->name === self::SULFURAS;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      * @return bool
      */
-    private function isAgedBrieItem($currentItem)
+    private function isAgedBrieItem($item)
     {
-        return $currentItem->name === self::AGED_BRIE;
+        return $item->name === self::AGED_BRIE;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      * @return bool
      */
-    private function isBackstageItem($currentItem)
+    private function isBackstageItem($item)
     {
-        return $currentItem->name === self::BACKSTAGE;
+        return $item->name === self::BACKSTAGE;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      */
-    private function decreaseItemQuality($currentItem)
+    private function decreaseItemQuality($item)
     {
-        $currentItem->quality = $currentItem->quality - 1;
+        $item->quality = $item->quality - 1;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      */
-    private function increaseItemQuality($currentItem)
+    private function increaseItemQuality($item)
     {
-        $currentItem->quality = $currentItem->quality + 1;
+        $item->quality = $item->quality + 1;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      */
-    private function decreaseItemSellIn($currentItem)
+    private function decreaseItemSellIn($item)
     {
-        $currentItem->sellIn = $currentItem->sellIn - 1;
+        $item->sellIn = $item->sellIn - 1;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      * @return bool
      */
-    private function itemBelowMaximumQuality($currentItem)
+    private function itemBelowMaximumQuality($item)
     {
-        return $currentItem->quality < self::MAXIMUM_QUALITY;
+        return $item->quality < self::MAXIMUM_QUALITY;
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      */
-    private function increaseItemQualityIfMaximumNotReached($currentItem)
+    private function increaseItemQualityIfMaximumNotReached($item)
     {
-        if ($this->itemBelowMaximumQuality($currentItem)) {
-            $this->increaseItemQuality($currentItem);
+        if ($this->itemBelowMaximumQuality($item)) {
+            $this->increaseItemQuality($item);
         }
     }
 
     /**
-     * @param $currentItem
+     * @param $item
      * @return bool
      */
-    private function itemHasPositiveQuality($currentItem)
+    private function itemHasPositiveQuality($item)
     {
-        return $currentItem->quality > 0;
+        return $item->quality > 0;
+    }
+
+    /**
+     * @param $item
+     * @return bool
+     */
+    private function itemSellInBelowZero($item)
+    {
+        return $item->sellIn < 0;
     }
 }
