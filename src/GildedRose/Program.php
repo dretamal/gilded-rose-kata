@@ -94,50 +94,53 @@ class Program
     public function UpdateQuality()
     {
         for ($i = 0; $i < count($this->items); $i++) {
-            if ($this->items[$i]->name != self::AGED_BRIE && $this->items[$i]->name != "" . self::BACKSTAGE) {
-                if ($this->items[$i]->quality > 0) {
-                    if ($this->items[$i]->name != self::SULFURAS) {
-                        $this->items[$i]->quality = $this->items[$i]->quality - 1;
+
+            $currentItem = $this->items[$i];
+
+            if ($currentItem->name != self::AGED_BRIE && $currentItem->name != "" . self::BACKSTAGE) {
+                if ($currentItem->quality > 0) {
+                    if ($currentItem->name != self::SULFURAS) {
+                        $this->items[$i]->quality = $currentItem->quality - 1;
                     }
                 }
             } else {
-                if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
-                    $this->items[$i]->quality = $this->items[$i]->quality + 1;
+                if ($currentItem->quality < self::MAXIMUM_QUALITY) {
+                    $this->items[$i]->quality = $currentItem->quality + 1;
 
-                    if ($this->items[$i]->name == self::BACKSTAGE) {
-                        if ($this->items[$i]->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
-                            if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
-                                $this->items[$i]->quality = $this->items[$i]->quality + 1;
+                    if ($currentItem->name == self::BACKSTAGE) {
+                        if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
+                            if ($currentItem->quality < self::MAXIMUM_QUALITY) {
+                                $this->items[$i]->quality = $currentItem->quality + 1;
                             }
                         }
 
-                        if ($this->items[$i]->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
-                            if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
-                                $this->items[$i]->quality = $this->items[$i]->quality + 1;
+                        if ($currentItem->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
+                            if ($currentItem->quality < self::MAXIMUM_QUALITY) {
+                                $this->items[$i]->quality = $currentItem->quality + 1;
                             }
                         }
                     }
                 }
             }
 
-            if ($this->items[$i]->name != self::SULFURAS) {
-                $this->items[$i]->sellIn = $this->items[$i]->sellIn - 1;
+            if ($currentItem->name != self::SULFURAS) {
+                $this->items[$i]->sellIn = $currentItem->sellIn - 1;
             }
 
-            if ($this->items[$i]->sellIn < 0) {
-                if ($this->items[$i]->name != self::AGED_BRIE) {
-                    if ($this->items[$i]->name != self::BACKSTAGE) {
-                        if ($this->items[$i]->quality > 0) {
-                            if ($this->items[$i]->name != self::SULFURAS) {
-                                $this->items[$i]->quality = $this->items[$i]->quality - 1;
+            if ($currentItem->sellIn < 0) {
+                if ($currentItem->name != self::AGED_BRIE) {
+                    if ($currentItem->name != self::BACKSTAGE) {
+                        if ($currentItem->quality > 0) {
+                            if ($currentItem->name != self::SULFURAS) {
+                                $this->items[$i]->quality = $currentItem->quality - 1;
                             }
                         }
                     } else {
-                        $this->items[$i]->quality = $this->items[$i]->quality - $this->items[$i]->quality;
+                        $this->items[$i]->quality = $currentItem->quality - $currentItem->quality;
                     }
                 } else {
-                    if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
-                        $this->items[$i]->quality = $this->items[$i]->quality + 1;
+                    if ($currentItem->quality < self::MAXIMUM_QUALITY) {
+                        $this->items[$i]->quality = $currentItem->quality + 1;
                     }
                 }
             }
