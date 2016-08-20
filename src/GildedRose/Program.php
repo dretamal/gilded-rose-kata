@@ -55,14 +55,20 @@ class Program
 
     const SULFURAS = "Sulfuras, Hand of Ragnaros";
 
+    const MAXIMUM_QUALITY = 50;
+
+    const BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS = 10;
+
+    const BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS = 5;
+
     public static function Main()
     {
         echo "HELLO\n";
 
         $app = new Program(array(
-              new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => 10,'quality' => 20)),
+              new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS,'quality' => 20)),
               new Item(array( 'name' => self::AGED_BRIE,'sellIn' => 2,'quality' => 0)),
-              new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => 5,'quality' => 7)),
+              new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS,'quality' => 7)),
               new Item(array( 'name' => self::SULFURAS,'sellIn' => 0,'quality' => 80)),
               new Item(array(
                      'name' => self::BACKSTAGE,
@@ -95,18 +101,18 @@ class Program
                     }
                 }
             } else {
-                if ($this->items[$i]->quality < 50) {
+                if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
                     $this->items[$i]->quality = $this->items[$i]->quality + 1;
 
                     if ($this->items[$i]->name == self::BACKSTAGE) {
-                        if ($this->items[$i]->sellIn < 11) {
-                            if ($this->items[$i]->quality < 50) {
+                        if ($this->items[$i]->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_TWO_THRESHOLD_DAYS) {
+                            if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
                                 $this->items[$i]->quality = $this->items[$i]->quality + 1;
                             }
                         }
 
-                        if ($this->items[$i]->sellIn < 6) {
-                            if ($this->items[$i]->quality < 50) {
+                        if ($this->items[$i]->sellIn <= self::BACKSTAGE_QUALITY_INCREMENT_BY_THREE_THRESHOLD_DAYS) {
+                            if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
                                 $this->items[$i]->quality = $this->items[$i]->quality + 1;
                             }
                         }
@@ -130,7 +136,7 @@ class Program
                         $this->items[$i]->quality = $this->items[$i]->quality - $this->items[$i]->quality;
                     }
                 } else {
-                    if ($this->items[$i]->quality < 50) {
+                    if ($this->items[$i]->quality < self::MAXIMUM_QUALITY) {
                         $this->items[$i]->quality = $this->items[$i]->quality + 1;
                     }
                 }
