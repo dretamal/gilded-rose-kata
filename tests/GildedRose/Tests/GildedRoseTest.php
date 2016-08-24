@@ -2,6 +2,7 @@
 
 namespace GildedRose\Tests;
 
+use GildedRose\ItemManager;
 use GildedRose\Program;
 use GildedRose\Item;
 
@@ -480,10 +481,12 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
     }
     public function testUpdateQualityItems()
     {
+
         foreach ($this->itemsData as $itemName => $itemData) {
 
             $items = $this->initializeOneItem($itemName, $itemData['initialSellIn'], $itemData['initialQuality']);
-            $program = new Program($items);
+            $itemManager = new ItemManager($items);
+
 
             $lastDayProcessed = null;
 
@@ -493,18 +496,18 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
                 } else {
                     $daysToUpdate = $day - $lastDayProcessed;
                 }
-                $this->updateItemQualityNDays($program, $daysToUpdate);
+                $this->updateItemQualityNDays($itemManager, $daysToUpdate);
                 $itemExpected = $this->buildItemFromParams($itemName, $itemAttributes['sellIn'], $itemAttributes['quality']);
-                $this->ownAssertItemExpected($itemExpected, $program);
+                $this->ownAssertItemExpected($itemExpected, $itemManager);
                 $lastDayProcessed = $day;
             }
         }
     }
 
-    private function updateItemQualityNDays(Program $program, $days = 1)
+    private function updateItemQualityNDays(ItemManager $itemManager, $days = 1)
     {
         for ($i=1; $i<=$days; $i++){
-            $program->updateQuality();
+            $itemManager->updateQuality();
         }
     }
 
@@ -515,14 +518,14 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $itemExpected
-     * @param $program
+     * @param $itemManager
      */
-    private function ownAssertItemExpected($itemExpected, $program)
+    private function ownAssertItemExpected($itemExpected, $itemManager)
     {
         $this->assertAttributeEquals(
             array($itemExpected),
             'items',
-            $program
+            $itemManager
         );
     }
 
