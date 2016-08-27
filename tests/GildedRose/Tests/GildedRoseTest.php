@@ -468,6 +468,7 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
         ob_end_clean();
         $this->assertEquals($this->getMainOutput(), $output);
     }
+
     private function getMainOutput()
     {
         return "HELLO
@@ -479,6 +480,7 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
          Backstage passes to a TAFKAL80ETC concert -      14 -      21
                                 Conjured Mana Cake -       2 -       5\n";
     }
+
     public function testUpdateQualityItems()
     {
 
@@ -486,7 +488,6 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
 
             $items = $this->initializeOneItem($itemName, $itemData['initialSellIn'], $itemData['initialQuality']);
             $itemManager = new ItemManager($items);
-
 
             $lastDayProcessed = null;
 
@@ -507,7 +508,7 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
     private function updateItemQualityNDays(ItemManager $itemManager, $days = 1)
     {
         for ($i=1; $i<=$days; $i++){
-            $itemManager->updateQuality();
+            $itemManager->updateItemAttributes();
         }
     }
 
@@ -553,14 +554,14 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
      */
     public function _testViewOutput()
     {
-        $itemName = "Aged Brie";
-        $items = $this->initializeOneItem($itemName, $initialSellIn = 2, $initialQuality = 0);
-        $program = new Program($items);
+        $itemName = "Backstage passes to a TAFKAL80ETC concert";
+        $items = $this->initializeOneItem($itemName, $initialSellIn = 15, $initialQuality = 20);
+        $itemManager = new ItemManager($items);
         $days = 25;
 
         for($i=1;$i<=$days;$i++){
-            $program->UpdateQuality();
-            $items = $program->getItems();
+            $itemManager->updateItemAttributes();
+            $items = $itemManager->getItems();
             $item = $items[0];
 
             echo "\n".$i . " => array(\n";

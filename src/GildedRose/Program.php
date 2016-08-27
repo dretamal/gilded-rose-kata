@@ -53,7 +53,7 @@ class Program
 
         $itemManager = new ItemManager();
         $itemManager->initItems();
-        $itemManager->updateQuality();
+        $itemManager->updateItemAttributes();
         OutputScreen::output($itemManager->getItems());
     }
 }

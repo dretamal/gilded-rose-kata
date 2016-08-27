@@ -52,13 +52,9 @@ class ItemManager
     }
 
 
-    public function updateQuality()
+    public function updateItemAttributes()
     {
-        $nItems = count($this->items);
-
-        for ($i = 0; $i < $nItems; $i++) {
-
-            $currentItem = $this->items[$i];
+        foreach ($this->items as $currentItem) {
 
             $this->processItemQuality($currentItem);
             $this->processItemSellIn($currentItem);
