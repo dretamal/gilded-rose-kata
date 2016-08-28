@@ -58,10 +58,8 @@ class ItemManager
 
             $this->processItemQuality($currentItem);
             $this->processItemSellIn($currentItem);
+            $this->updateQualityItemsByItemType($currentItem);
 
-            if ($this->itemSellInBelowZero($currentItem)) {
-                $this->updateQualityItemsByItemType($currentItem);
-            }
         }
     }
 
@@ -148,24 +146,25 @@ class ItemManager
     /**
      * @param $currentItem
      */
-    private function updateQualityItemsByItemType($currentItem)
-    {
-        switch ($currentItem->name) {
-            case "Aged Brie":
-                if ($this->itemIsBelowMaximumQuality($currentItem)) {
-                    $this->increaseItemQualityByOne($currentItem);
-                }
-                break;
-            case 'Backstage passes to a TAFKAL80ETC concert':
-                $currentItem->quality = $currentItem->quality - $currentItem->quality;
-                break;
-            default:
-                if ($this->itemQualityCanBeDecreased($currentItem)) {
-                    $this->decreaseItemQuality($currentItem);
-                }
-                break;
-        }
+    private function updateQualityItemsByItemType($currentItem) {
 
+        if ($this->itemSellInBelowZero($currentItem)) {
+            switch ($currentItem->name) {
+                case self::AGED_BRIE:
+                    if ($this->itemIsBelowMaximumQuality($currentItem)) {
+                        $this->increaseItemQualityByOne($currentItem);
+                    }
+                    break;
+                case self::BACKSTAGE:
+                    $currentItem->quality = $currentItem->quality - $currentItem->quality;
+                    break;
+                default:
+                    if ($this->itemQualityCanBeDecreased($currentItem)) {
+                        $this->decreaseItemQuality($currentItem);
+                    }
+                    break;
+            }
+        }
     }
 
     /**
@@ -174,12 +173,12 @@ class ItemManager
     private function processItemQuality($currentItem)
     {
         switch ($currentItem->name) {
-            case 'Aged Brie':
+            case self::AGED_BRIE:
                 if ($this->itemIsBelowMaximumQuality($currentItem)) {
                     $this->increaseItemQualityByOne($currentItem);
                 }
                 break;
-            case 'Backstage passes to a TAFKAL80ETC concert':
+            case self::BACKSTAGE:
                 if ($this->itemIsBelowMaximumQuality($currentItem)) {
                     $this->increaseItemQualityByOne($currentItem);
                     $this->increaseBackstageQualityWithSpecialRules($currentItem);

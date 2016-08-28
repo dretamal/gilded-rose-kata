@@ -481,8 +481,7 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
                                 Conjured Mana Cake -       2 -       5\n";
     }
 
-    public function testUpdateQualityItems()
-    {
+    public function testUpdateQualityItems() {
 
         foreach ($this->itemsData as $itemName => $itemData) {
 
